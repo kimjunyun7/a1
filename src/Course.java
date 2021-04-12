@@ -1,9 +1,9 @@
 public class Course {
     private String id;
     private String name;
-    private int numOfCredit;
+    private String numOfCredit;
 
-    Course(String id, String name, int numOfCredit) {
+    Course(String id, String name, String numOfCredit) {
         this.id = id;
         this.name = name;
         this.numOfCredit = numOfCredit;
@@ -25,11 +25,11 @@ public class Course {
         this.name = name;
     }
 
-    public int getNumOfCredit() {
+    public String getNumOfCredit() {
         return numOfCredit;
     }
 
-    public void setNumOfCredit(int numOfCredit) {
+    public void setNumOfCredit(String numOfCredit) {
         this.numOfCredit = numOfCredit;
     }
 }

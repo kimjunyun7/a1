@@ -3,26 +3,29 @@ import java.util.List;
 
 public class StudentEnrolment {
 
-    private String semester;
     private Student student;
     private Course course;
-//    List<Student> students;
-//    List<Course> courses;
+    private String semester;
 
-    StudentEnrolment(String semester, Student student, Course course) {
-        this.semester = semester;
-        this.student =student;
+
+    StudentEnrolment(Student student, Course course, String semester) {
+        this.student = student;
         this.course = course;
-    }
-
-
-    public String getSemester() {
-        return semester;
-    }
-
-    public void setSemester(String semester) {
         this.semester = semester;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        StudentEnrolment e = (StudentEnrolment) obj;
+        return this.getStudent() == (e.getStudent())
+                && this.getCourse() == (e.getCourse())
+                && this.getSemester() == (e.getSemester());
+    }
+
 
     public Student getStudent() {
         return student;
@@ -40,4 +43,12 @@ public class StudentEnrolment {
         this.course = course;
     }
 
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
 }
+
