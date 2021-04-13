@@ -241,12 +241,41 @@ public class Enrolment implements StudentEnrolmentManager {
 
     @Override
     public void update(String input) {
-
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            System.out.println("Enter a student information to update..");
+            enterStudentId();
+            enterSemester();
+            System.out.println();
+            getAll(1);
+            System.out.print("Do you want add or delete a course? (add / delete): ");
+            input = scanner.nextLine().toLowerCase();
+            if(input.equals("add") || input.equals("delete")) {
+                if(input.equals("add")) add();
+                if(input.equals("delete")) delete();
+            } else {
+                printInvalid();
+                continue;
+            }
+            break;
+        }
     }
 
     @Override
     public void delete() {
-
+        while(true) {
+            System.out.println();
+            getAll(1);
+            System.out.println("Enter enrolment details to delete..");
+            enterStudentId();
+            enterCourse();
+            enterSemester();
+            StudentEnrolment se = getOne();
+            if (se != null) {
+                studentEnrolmentList.remove(se);
+                break;
+            }
+        }
     }
 
     @Override
