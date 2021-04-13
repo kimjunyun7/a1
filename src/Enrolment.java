@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Enrolment implements StudentEnrolmentManager {
 
-    public ArrayList<StudentEnrolment> studentEnrolmentList = new ArrayList<StudentEnrolment>();;
+    public ArrayList<StudentEnrolment> studentEnrolmentList = new ArrayList<StudentEnrolment>();
     public ArrayList<Student> studentList = new ArrayList<>();
     public ArrayList<Course> courseList = new ArrayList<>();
 

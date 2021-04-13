@@ -10,6 +10,7 @@ public class FileManager {
 
     private static final String CSV_SEPERATOR = ",";
     Enrolment enrolment = new Enrolment();
+    MakeList makeList = new MakeList();
 
 
     // Load a file of enrolments
@@ -21,13 +22,13 @@ public class FileManager {
             //Read file line by line
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(CSV_SEPERATOR);
-                Enrolment.studentEnrolmentList.add(new StudentEnrolment(
+                enrolment.studentEnrolmentList.add(new StudentEnrolment(
                         new Student(tokens[0], tokens[1], tokens[2]),
                         new Course(tokens[3], tokens[4], tokens[5]),
                         tokens[6]));
             }
-            enrolment.makeStudentList();
-            enrolment.makeCourseList();
+            makeList.makeStudentList();
+            makeList.makeCourseList();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +53,7 @@ public class FileManager {
             writer = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8);
 //            writer = new BufferedWriter(new FileWriter(file));
 
-            for(StudentEnrolment se : Enrolment.studentEnrolmentList) {
+            for(StudentEnrolment se : enrolment.studentEnrolmentList) {
                 StringBuffer oneLine = new StringBuffer();
                 oneLine.append(se.getStudent().getId());
                 oneLine.append(CSV_SEPERATOR);
