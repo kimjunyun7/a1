@@ -36,6 +36,54 @@ public class Enrolment implements StudentEnrolmentManager {
         }
         fileManager.loadFile(file);
         enrolment.nextStep();
+
+        // Menu
+        System.out.println("%--- MENU ---%");
+
+        // User chooses an option
+        System.out.print("1. Add a new enrolment \n2. Update enrolments" +
+                "\n3. Delete an enrolment \n4. Read enrolment list " +
+                "\nEnter a number of an option: ");
+        userInput = scanner.nextLine();
+        enrolment.nextStep();
+        switch (Integer.parseInt(userInput)) {
+
+            // add a new enrolment
+            case 1:
+                while(true) {
+                    System.out.println("Enter a student information..");
+                    enrolment.add();
+                    System.out.print("Do you want to enter more? (yes / no): ");
+                    userInput = scanner.nextLine().toLowerCase();
+                    if(!userInput.isEmpty()) {
+                        if(userInput.equals("no")) break;
+                        else if (!userInput.equals("yes")) enrolment.printInvalid();
+                    } else enrolment.printInvalid();
+                }
+                break;
+
+            // Update enrolments
+            case 2:
+                enrolment.update(userInput);
+                break;
+
+            // Delete an enrolment
+            case 3:
+                enrolment.delete();
+                break;
+
+            // Read enrolment list
+            case 4:
+                while(true) {
+                    System.out.println();
+                    break;
+                }
+                break;
+
+            default:
+                enrolment.printInvalid();
+                break;
+        }
     }
 
 
@@ -119,7 +167,7 @@ public class Enrolment implements StudentEnrolmentManager {
     }
 
     @Override
-    public void update() {
+    public void update(String input) {
 
     }
 
