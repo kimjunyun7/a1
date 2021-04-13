@@ -2,20 +2,24 @@ import java.util.*;
 
 public class Enrolment implements StudentEnrolmentManager {
 
-    public static ArrayList<StudentEnrolment> studentEnrolmentList = new ArrayList<StudentEnrolment>();;
-    private static ArrayList<Student> studentList = new ArrayList<>();
-    private static ArrayList<Course> courseList = new ArrayList<>();
+    public ArrayList<StudentEnrolment> studentEnrolmentList = new ArrayList<StudentEnrolment>();;
+    public ArrayList<Student> studentList = new ArrayList<>();
+    public ArrayList<Course> courseList = new ArrayList<>();
 
     public static String file = "default.csv";
     private static String studentId = "";
     private static String courseId = "";
     private static String semester = "";
 
+    private static InputInfo inputInfo = new InputInfo();
+    private static FindFromList findFromList = new FindFromList();
+
 
     public static void main(String[] args) throws Exception {
 
         Enrolment enrolment = new Enrolment();
         FileManager fileManager = new FileManager();
+
         String userInput = "";
         Scanner scanner = new Scanner(System.in);
 
@@ -56,8 +60,8 @@ public class Enrolment implements StudentEnrolmentManager {
             case 1:
                 while(true) {
                     System.out.println("Enter a student information..");
-                    enrolment.enterStudentId();
-                    enrolment.enterSemester();
+                    studentId = inputInfo.enterStudentId();
+                    semester = inputInfo.enterSemester();
                     enrolment.add();
                     System.out.print("Do you want to enter more? (yes / no): ");
                     userInput = scanner.nextLine().toLowerCase();
@@ -89,17 +93,17 @@ public class Enrolment implements StudentEnrolmentManager {
                     if(!(userInput.equals("")) || enrolment.isParsable(userInput)) {
                         // input == 1
                         if(userInput.equals("1")) {
-                            enrolment.enterStudentId();
-                            enrolment.enterSemester();
+                            studentId = inputInfo.enterStudentId();
+                            semester = inputInfo.enterSemester();
                         }
                         // input == 2
                         else if(userInput.equals("2")) {
-                            enrolment.enterCourse();
-                            enrolment.enterSemester();
+                            courseId = inputInfo.enterCourse();
+                            semester = inputInfo.enterSemester();
                         }
                         // input == 3
                         else if(userInput.equals("3")) {
-                            enrolment.enterSemester();
+                            semester = inputInfo.enterSemester();
                         }
                         enrolment.getAll(Integer.parseInt(userInput));
                         break;
@@ -115,7 +119,7 @@ public class Enrolment implements StudentEnrolmentManager {
         enrolment.nextStep();
         System.out.println("Result..");
         System.out.println();
-        for (StudentEnrolment list : studentEnrolmentList) {
+        for (StudentEnrolment list : enrolment.studentEnrolmentList) {
             System.out.println(list.getStudent().getId()+", "+list.getStudent().getName()+", "+
                     list.getStudent().getBirthdate()+" | "+
                     list.getCourse().getId()+", "+list.getCourse().getName()+", "+
@@ -123,44 +127,6 @@ public class Enrolment implements StudentEnrolmentManager {
 
         }
         fileManager.writeFile(file);
-    }
-
-
-    // Ask user to enter student id
-    public void enterStudentId() {
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            System.out.print("Student ID: ");
-            studentId = scanner.nextLine().toUpperCase();
-            if (studentId.isEmpty()) printInvalid();
-            else if(findStudent(studentId) == null) System.out.println("Unregistered Student!");
-            else break;
-        }
-    }
-
-
-    // Ask user to enter semester
-    public void enterSemester() {
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            System.out.print("Semester: ");
-            semester = scanner.nextLine().toUpperCase();
-            if (semester.isEmpty()) printInvalid();
-            else break;
-        }
-    }
-
-
-    // Ask user to enter course
-    public void enterCourse() {
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            System.out.print("Course: ");
-            courseId = scanner.nextLine().toUpperCase();
-            if (courseId.isEmpty()) printInvalid();
-            else if(findCourse(courseId) == null) System.out.println("No Course Found!");
-            else break;
-        }
     }
 
 
@@ -176,44 +142,6 @@ public class Enrolment implements StudentEnrolmentManager {
     public void printInvalid() {
         System.out.println("Invalid input, try again!");
         System.out.println();
-    }
-
-
-    // Make a list of students from a file
-    public static void makeStudentList() {
-        HashSet<String> st = new HashSet<String>();
-        studentList = new ArrayList<Student>();
-        for(StudentEnrolment studentE : studentEnrolmentList) studentList.add(studentE.getStudent());
-        studentList.removeIf(e->!st.add(e.getName()));
-    }
-
-
-    // Make a list of courses from a file
-    public static void makeCourseList() {
-        HashSet<String> co = new HashSet<String>();
-        courseList = new ArrayList<Course>();
-        for(StudentEnrolment studentE : studentEnrolmentList) courseList.add(studentE.getCourse());
-        courseList.removeIf(e->!co.add(e.getName()));
-    }
-
-
-    // Find a specific course object
-    public Course findCourse(String courseId) {
-        for(Course course : courseList) {
-            if(course.getId().equals(courseId))
-                return course;
-        }
-        return null;
-    }
-
-
-    // Find a specific student object
-    public Student findStudent(String stId) {
-        for(Student student : studentList) {
-            if(student.getId().equals(stId))
-                return student;
-        }
-        return null;
     }
 
 
@@ -243,9 +171,10 @@ public class Enrolment implements StudentEnrolmentManager {
         }
         System.out.println("Enter "+numOfCourses+" course IDs.. ");
         for (int i=0; i<numOfCourses; i++) {
-            enterCourse();
+            courseId = inputInfo.enterCourse();
             studentEnrolmentList.add(
-                    new StudentEnrolment(findStudent(studentId), findCourse(courseId), semester));
+                    new StudentEnrolment(findFromList.findStudent(studentId),
+                            findFromList.findCourse(courseId), semester));
         }
         System.out.println();
     }
@@ -255,8 +184,8 @@ public class Enrolment implements StudentEnrolmentManager {
         Scanner scanner = new Scanner(System.in);
         while(true) {
             System.out.println("Enter a student information to update..");
-            enterStudentId();
-            enterSemester();
+            studentId = inputInfo.enterStudentId();
+            semester = inputInfo.enterSemester();
             System.out.println();
             getAll(1);
             System.out.print("Do you want add or delete a course? (add / delete): ");
@@ -278,9 +207,9 @@ public class Enrolment implements StudentEnrolmentManager {
             System.out.println();
             getAll(1);
             System.out.println("Enter enrolment details to delete..");
-            enterStudentId();
-            enterCourse();
-            enterSemester();
+            studentId = inputInfo.enterStudentId();
+            courseId = inputInfo.enterCourse();
+            semester = inputInfo.enterSemester();
             StudentEnrolment se = getOne();
             if (se != null) {
                 studentEnrolmentList.remove(se);

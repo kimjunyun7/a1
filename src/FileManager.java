@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 public class FileManager {
 
     private static final String CSV_SEPERATOR = ",";
+    Enrolment enrolment = new Enrolment();
 
 
     // Load a file of enrolments
@@ -25,8 +26,8 @@ public class FileManager {
                         new Course(tokens[3], tokens[4], tokens[5]),
                         tokens[6]));
             }
-            Enrolment.makeStudentList();
-            Enrolment.makeCourseList();
+            enrolment.makeStudentList();
+            enrolment.makeCourseList();
         }
         catch (Exception e) {
             e.printStackTrace();
