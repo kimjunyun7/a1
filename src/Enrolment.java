@@ -250,8 +250,18 @@ public class Enrolment implements StudentEnrolmentManager {
     }
 
     @Override
-    public void getOne() {
-
+    public StudentEnrolment getOne() {
+        for (StudentEnrolment list : studentEnrolmentList) {
+            if (list.getStudent().getId().equals(studentId) && list.getCourse().getId().equals(courseId)
+                    && list.getSemester().equals(semester)) {
+                System.out.println(list.getStudent().getId()+", "+list.getStudent().getName()+", "+
+                        list.getStudent().getBirthdate()+" | "+
+                        list.getCourse().getId()+", "+list.getCourse().getName()+", "+
+                        list.getCourse().getNumOfCredit()+" | "+list.getSemester());
+                return new StudentEnrolment(list.getStudent(), list.getCourse(), list.getSemester());
+            }
+        }
+        return null;
     }
 
     @Override
