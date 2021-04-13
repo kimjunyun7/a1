@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Enrolment implements StudentEnrolmentManager {
 
@@ -9,12 +6,14 @@ public class Enrolment implements StudentEnrolmentManager {
     private static ArrayList<Student> studentList = new ArrayList<>();
     private static ArrayList<Course> courseList = new ArrayList<>();
 
-    private static String file = "default.csv";
+    public static String file = "default.csv";
     private static String studentId = "";
     private static String courseId = "";
     private static String semester = "";
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws Exception {
+
         Enrolment enrolment = new Enrolment();
         FileManager fileManager = new FileManager();
         String userInput = "";
@@ -37,8 +36,10 @@ public class Enrolment implements StudentEnrolmentManager {
                 enrolment.printInvalid();
             }
         }
+
         fileManager.loadFile(file);
         enrolment.nextStep();
+
 
         // Menu
         System.out.println("%--- MENU ---%");
@@ -110,8 +111,22 @@ public class Enrolment implements StudentEnrolmentManager {
                 enrolment.printInvalid();
                 break;
         }
+
+        enrolment.nextStep();
+        System.out.println("Result..");
+        System.out.println();
+        for (StudentEnrolment list : studentEnrolmentList) {
+            System.out.println(list.getStudent().getId()+", "+list.getStudent().getName()+", "+
+                    list.getStudent().getBirthdate()+" | "+
+                    list.getCourse().getId()+", "+list.getCourse().getName()+", "+
+                    list.getCourse().getNumOfCredit()+" | "+list.getSemester());
+
+        }
+        fileManager.writeFile(file);
     }
 
+
+    // Ask user to enter student id
     public void enterStudentId() {
         Scanner scanner = new Scanner(System.in);
         while(true) {
@@ -150,7 +165,7 @@ public class Enrolment implements StudentEnrolmentManager {
 
 
     // Print a bar to separate each step of the system
-    private void nextStep() {
+    public void nextStep() {
         System.out.println();
         System.out.println("------------------------------");
         System.out.println();
@@ -158,7 +173,7 @@ public class Enrolment implements StudentEnrolmentManager {
 
 
     // Print "Invalid" when input has errors
-    private void printInvalid() {
+    public void printInvalid() {
         System.out.println("Invalid input, try again!");
         System.out.println();
     }
@@ -183,17 +198,17 @@ public class Enrolment implements StudentEnrolmentManager {
 
 
     // Find a specific course object
-    private Course findCourse(String courseId) {
+    public Course findCourse(String courseId) {
         for(Course course : courseList) {
             if(course.getId().equals(courseId))
-            return course;
+                return course;
         }
         return null;
     }
 
 
     // Find a specific student object
-    private Student findStudent(String stId) {
+    public Student findStudent(String stId) {
         for(Student student : studentList) {
             if(student.getId().equals(stId))
                 return student;
@@ -212,29 +227,25 @@ public class Enrolment implements StudentEnrolmentManager {
         }
     }
 
+
     @Override
     public void add() {
         int numOfCourses = 0;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter a student information..");
-        System.out.print("Student ID: ");
-        String stId = scanner.nextLine().toUpperCase(); // Student ID
-        System.out.print("Semester: ");
-        String stSem = scanner.nextLine().toUpperCase(); // Semester student will enroll
         while(true) {
             try {
                 System.out.println("Number of courses to enroll: ");
-                numOfCourses = scanner.nextInt();
-                scanner.nextLine();
+                numOfCourses = Integer.parseInt(scanner.nextLine());
                 break;
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input!");
+                printInvalid();
             }
         }
-        System.out.println("Enter "+numOfCourses+" courses: ");
+        System.out.println("Enter "+numOfCourses+" course IDs.. ");
         for (int i=0; i<numOfCourses; i++) {
-            System.out.println("Course "+(i+1));
-            //stCourse = scanner.nextLine().toUpperCase();
+            enterCourse();
+            studentEnrolmentList.add(
+                    new StudentEnrolment(findStudent(studentId), findCourse(courseId), semester));
         }
         System.out.println();
     }
