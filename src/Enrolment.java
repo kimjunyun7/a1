@@ -113,7 +113,7 @@ public class Enrolment implements StudentEnrolmentManager {
         System.out.println("Enter "+numOfCourses+" courses: ");
         for (int i=0; i<numOfCourses; i++) {
             System.out.println("Course "+(i+1));
-            stCourse = scanner.nextLine().toUpperCase();
+            //stCourse = scanner.nextLine().toUpperCase();
         }
         System.out.println();
     }
