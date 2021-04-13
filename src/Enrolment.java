@@ -10,6 +10,9 @@ public class Enrolment implements StudentEnrolmentManager {
     private static ArrayList<Course> courseList = new ArrayList<>();
 
     private static String file = "default.csv";
+    private static String studentId = "";
+    private static String courseId = "";
+    private static String semester = "";
 
     public static void main(String[] args) {
         Enrolment enrolment = new Enrolment();
@@ -52,6 +55,8 @@ public class Enrolment implements StudentEnrolmentManager {
             case 1:
                 while(true) {
                     System.out.println("Enter a student information..");
+                    enrolment.enterStudentId();
+                    enrolment.enterSemester();
                     enrolment.add();
                     System.out.print("Do you want to enter more? (yes / no): ");
                     userInput = scanner.nextLine().toLowerCase();
@@ -75,14 +80,71 @@ public class Enrolment implements StudentEnrolmentManager {
             // Read enrolment list
             case 4:
                 while(true) {
-                    System.out.println();
-                    break;
+                    System.out.print("1. All courses of 1 student in 1 semester \n" +
+                            "2. All students of 1 course in 1 semester \n" +
+                            "3. All courses in 1 semester \nEnter a number of an option: ");
+                    userInput = scanner.nextLine();
+                    enrolment.nextStep();
+                    if(!(userInput.equals("")) || enrolment.isParsable(userInput)) {
+                        // input == 1
+                        if(userInput.equals("1")) {
+                            enrolment.enterStudentId();
+                            enrolment.enterSemester();
+                        }
+                        // input == 2
+                        else if(userInput.equals("2")) {
+                            enrolment.enterCourse();
+                            enrolment.enterSemester();
+                        }
+                        // input == 3
+                        else if(userInput.equals("3")) {
+                            enrolment.enterSemester();
+                        }
+                        enrolment.getAll(Integer.parseInt(userInput));
+                        break;
+                    }
                 }
                 break;
 
             default:
                 enrolment.printInvalid();
                 break;
+        }
+    }
+
+    public void enterStudentId() {
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            System.out.print("Student ID: ");
+            studentId = scanner.nextLine().toUpperCase();
+            if (studentId.isEmpty()) printInvalid();
+            else if(findStudent(studentId) == null) System.out.println("Unregistered Student!");
+            else break;
+        }
+    }
+
+
+    // Ask user to enter semester
+    public void enterSemester() {
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            System.out.print("Semester: ");
+            semester = scanner.nextLine().toUpperCase();
+            if (semester.isEmpty()) printInvalid();
+            else break;
+        }
+    }
+
+
+    // Ask user to enter course
+    public void enterCourse() {
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            System.out.print("Course: ");
+            courseId = scanner.nextLine().toUpperCase();
+            if (courseId.isEmpty()) printInvalid();
+            else if(findCourse(courseId) == null) System.out.println("No Course Found!");
+            else break;
         }
     }
 
@@ -139,6 +201,17 @@ public class Enrolment implements StudentEnrolmentManager {
         return null;
     }
 
+
+    // Check if a String input is parsable to an integer
+    public boolean isParsable(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (final NumberFormatException e) {
+            return false;
+        }
+    }
+
     @Override
     public void add() {
         int numOfCourses = 0;
@@ -182,7 +255,39 @@ public class Enrolment implements StudentEnrolmentManager {
     }
 
     @Override
-    public void getAll() {
-
+    public void getAll(int input) {
+        // All courses of 1 student in 1 semester
+        if(input == 1) { // input == 4 when update enrolments
+            System.out.print("studentID: " + studentId);
+            System.out.println(" | Sem: " + semester);
+            System.out.println("Courses: ");
+            for (StudentEnrolment list : studentEnrolmentList) {
+                if (list.getStudent().getId().equals(studentId) && list.getSemester().equals(semester))
+                    System.out.println(list.getCourse().getId() + ", " + list.getCourse().getName() + ", " +
+                            list.getCourse().getNumOfCredit());
+            }
+        }
+        // All students of 1 course in 1 semester
+        else if(input == 2) {
+            System.out.print("Course: " + courseId);
+            System.out.println(" | Sem: " + semester);
+            System.out.println("Students: ");
+            for (StudentEnrolment list : studentEnrolmentList) {
+                if(list.getCourse().getId().equals(courseId) && list.getSemester().equals(semester))
+                    System.out.println(list.getStudent().getId()+", "+list.getStudent().getName()+", "+
+                            list.getStudent().getBirthdate());
+            }
+        }
+        // All courses in 1 semester
+        else if(input == 3) {
+            System.out.println("Sem: " + semester);
+            System.out.println("Courses: ");
+            for (StudentEnrolment list : studentEnrolmentList) {
+                if(list.getSemester().equals(semester))
+                    System.out.println(list.getCourse().getId()+", "+list.getCourse().getName()+", "+
+                            list.getCourse().getNumOfCredit());
+            }
+        }
+        System.out.println();
     }
 }
